@@ -69,7 +69,11 @@ def data_cat_2():
     return cat
 
 
-@pytest.mark.parametrize('data', [data_cat_2()])
+def data_cat_3():
+    return pd.Series(["Hello", "World"])
+
+
+@pytest.mark.parametrize('data', [data_cat_3()])
 @pytest.mark.xfail(raises=AttributeError)
 def test_categorical_accessor_initialization(data):
     pdsr = pd.Series(data.copy())
