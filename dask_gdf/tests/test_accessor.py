@@ -70,7 +70,7 @@ def data_cat_2():
 
 
 def data_cat_3():
-    return pd.Series(["Hello", "World"])
+    return pd.Series([1, 2, 3])
 
 
 @pytest.mark.parametrize('data', [data_cat_3()])
@@ -79,3 +79,33 @@ def test_categorical_accessor_initialization(data):
     sr = Series(data.copy())
     dsr = dgd.from_pygdf(sr, npartitions=5)
     dsr.cat
+
+
+@pytest.mark.parametrize('data', [data_cat_1(), data_cat_2()])
+def test_categorical_basic(data):
+    cat = data.copy()
+    pdsr = pd.Series(cat)
+    sr = Series(cat)
+    dsr = dgd.from_pygdf(sr, npartitions=2)
+    result = dsr.compute()
+    np.testing.assert_array_equal(cat.codes, result.to_array())
+    assert dsr.dtype == pdsr.dtype
+
+    # Test attributes
+    assert pdsr.cat.ordered == dsr.cat.ordered.compute()
+    # TODO: Investigate dsr.cat.categories: It raises
+    # ValueError: Expected iterable of tuples of (name, dtype), got ('a', 'b', 'c')
+    # assert(tuple(pdsr.cat.categories) == tuple(dsr.cat.categories))
+
+    np.testing.assert_array_equal(pdsr.cat.codes.data, result.to_array())
+    np.testing.assert_array_equal(pdsr.cat.codes.dtype, dsr.cat.codes.dtype)
+
+    string = str(result)
+    expect_str = """
+0 a
+1 a
+2 b
+3 c
+4 a
+"""
+    assert all(x == y for x, y in zip(string.split(), expect_str.split()))
