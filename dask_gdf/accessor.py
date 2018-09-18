@@ -103,9 +103,9 @@ class CategoricalAccessor(Accessor):
     """ Accessor object for categorical properties of the Series values
     of Categorical type.
     """
-    
+
     from pygdf.categorical import CategoricalAccessor as gdfCategoricalAccessor
-    
+
     _accessor = gdfCategoricalAccessor
     _accessor_name = 'cat'
 
