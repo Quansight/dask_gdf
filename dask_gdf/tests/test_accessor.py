@@ -65,15 +65,10 @@ def data_cat_1():
 
 
 def data_cat_2():
-    cat = pd.Categorical(['a', '_', '_', 'c', 'a'], categories=['a', 'b', 'c'])
-    return cat
-
-
-def data_cat_3():
     return pd.Series([1, 2, 3])
 
 
-def data_cat_4():
+def data_cat_3():
     cat1 = pd.Categorical(['a', 'a', 'b', 'c', 'a'],
                           categories=['a', 'b', 'c'], ordered=True)
     cat2 = pd.Categorical(['a', 'b', 'a', 'c', 'b'],
@@ -81,7 +76,7 @@ def data_cat_4():
     return cat1, cat2
 
 
-@pytest.mark.parametrize('data', [data_cat_3()])
+@pytest.mark.parametrize('data', [data_cat_2()])
 @pytest.mark.xfail(raises=AttributeError)
 def test_categorical_accessor_initialization(data):
     sr = Series(data.copy())
@@ -151,7 +146,7 @@ def test_categorical_compare_unordered(data):
     raises.match("Unordered Categoricals can only compare equality or not")
 
 
-@pytest.mark.parametrize('data', [data_cat_4()])
+@pytest.mark.parametrize('data', [data_cat_3()])
 def test_categorical_compare_ordered(data):
     cat1 = data[0]
     cat2 = data[1]
