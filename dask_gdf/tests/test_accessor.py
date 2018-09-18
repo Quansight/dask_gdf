@@ -81,7 +81,7 @@ def test_categorical_accessor_initialization(data):
     dsr.cat
 
 
-@pytest.mark.parametrize('data', [data_cat_1(), data_cat_2()])
+@pytest.mark.parametrize('data', [data_cat_1()])
 def test_categorical_basic(data):
     cat = data.copy()
     pdsr = pd.Series(cat)
