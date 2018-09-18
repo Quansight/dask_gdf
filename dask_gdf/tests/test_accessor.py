@@ -73,6 +73,14 @@ def data_cat_3():
     return pd.Series([1, 2, 3])
 
 
+def data_cat_4():
+    cat1 = pd.Categorical(['a', 'a', 'b', 'c', 'a'],
+                          categories=['a', 'b', 'c'], ordered=True)
+    cat2 = pd.Categorical(['a', 'b', 'a', 'c', 'b'],
+                          categories=['a', 'b', 'c'], ordered=True)
+    return cat1, cat2
+
+
 @pytest.mark.parametrize('data', [data_cat_3()])
 @pytest.mark.xfail(raises=AttributeError)
 def test_categorical_accessor_initialization(data):
@@ -122,12 +130,15 @@ def test_categorical_compare_unordered(data):
     out = dsr == dsr
     assert out.dtype == np.bool_
     assert np.all(out.compute())
+    assert np.all(pdsr == pdsr)
 
     # Test inequality
     out = dsr != dsr
     assert not np.any(out.compute())
+    assert not np.any(pdsr != pdsr)
 
     assert not dsr.cat.ordered.compute()
+    assert not pdsr.cat.ordered
 
     with pytest.raises((TypeError, ValueError)) as raises:
         pdsr < pdsr
@@ -138,3 +149,33 @@ def test_categorical_compare_unordered(data):
         dsr < dsr
 
     raises.match("Unordered Categoricals can only compare equality or not")
+
+
+@pytest.mark.parametrize('data', [data_cat_4()])
+def test_categorical_compare_ordered(data):
+    cat1 = data[0]
+    cat2 = data[1]
+    pdsr1 = pd.Series(cat1)
+    pdsr2 = pd.Series(cat2)
+    sr1 = Series(cat1)
+    sr2 = Series(cat2)
+    dsr1 = dgd.from_pygdf(sr1)
+    dsr2 = dgd.from_pygdf(sr2)
+
+    # Test equality
+    out = dsr1 == dsr1
+    assert out.dtype == np.bool_
+    assert np.all(out.compute())
+    assert np.all(pdsr1 == pdsr1)
+
+    # Test inequality
+    out = dsr1 != dsr1
+    assert not np.any(out.compute())
+    assert not np.any(pdsr1 != pdsr1)
+
+    assert dsr1.cat.ordered
+    assert pdsr1.cat.ordered
+
+    # Test ordered operators
+    np.testing.assert_array_equal(pdsr1 < pdsr2, (dsr1 < dsr2).compute())
+    np.testing.assert_array_equal(pdsr1 > pdsr2, (dsr1 > dsr2).compute())
