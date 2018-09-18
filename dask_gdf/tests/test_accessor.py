@@ -159,8 +159,8 @@ def test_categorical_compare_ordered(data):
     pdsr2 = pd.Series(cat2)
     sr1 = Series(cat1)
     sr2 = Series(cat2)
-    dsr1 = dgd.from_pygdf(sr1)
-    dsr2 = dgd.from_pygdf(sr2)
+    dsr1 = dgd.from_pygdf(sr1, npartitions=2)
+    dsr2 = dgd.from_pygdf(sr2, npartitions=2)
 
     # Test equality
     out = dsr1 == dsr1
