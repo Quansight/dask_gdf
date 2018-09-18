@@ -76,7 +76,6 @@ def data_cat_3():
 @pytest.mark.parametrize('data', [data_cat_3()])
 @pytest.mark.xfail(raises=AttributeError)
 def test_categorical_accessor_initialization(data):
-    pdsr = pd.Series(data.copy())
-    sr = Series(pdsr)
+    sr = Series(data.copy())
     dsr = dgd.from_pygdf(sr, npartitions=5)
     dsr.cat
