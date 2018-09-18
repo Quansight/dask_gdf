@@ -57,7 +57,7 @@ class Accessor(object):
                                            token=token, meta=meta)
 
     def _function_map(self, attr, *args, **kwargs):
-        meta = self._delegate_method(self._series._meta,
+        meta = self._delegate_method(self._series._meta_nonempty,
                                      self._accessor_name, attr, args, kwargs)
         token = '%s-%s' % (self._accessor_name, attr)
         return self._series.map_partitions(self._delegate_method,
