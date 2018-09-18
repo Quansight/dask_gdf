@@ -129,12 +129,12 @@ def test_categorical_compare_unordered(data):
 
     assert not dsr.cat.ordered.compute()
 
-    with pytest.raises(TypeError) as raises:
+    with pytest.raises((TypeError, ValueError)) as raises:
         pdsr < pdsr
 
     raises.match("Unordered Categoricals can only compare equality or not")
 
-    with pytest.raises(TypeError) as raises:
+    with pytest.raises((TypeError, ValueError)) as raises:
         dsr < dsr
 
     raises.match("Unordered Categoricals can only compare equality or not")
