@@ -109,3 +109,32 @@ def test_categorical_basic(data):
 4 a
 """
     assert all(x == y for x, y in zip(string.split(), expect_str.split()))
+
+
+@pytest.mark.parametrize('data', [data_cat_1()])
+def test_categorical_compare_unordered(data):
+    cat = data.copy()
+    pdsr = pd.Series(cat)
+    sr = Series(cat)
+    dsr = dgd.from_pygdf(sr, npartitions=2)
+
+    # Test equality
+    out = dsr == dsr
+    assert out.dtype == np.bool_
+    assert np.all(out.compute())
+
+    # Test inequality
+    out = dsr != dsr
+    assert not np.any(out.compute())
+
+    assert not dsr.cat.ordered.compute()
+
+    with pytest.raises(TypeError) as raises:
+        pdsr < pdsr
+
+    raises.match("Unordered Categoricals can only compare equality or not")
+
+    with pytest.raises(TypeError) as raises:
+        dsr < dsr
+
+    raises.match("Unordered Categoricals can only compare equality or not")
